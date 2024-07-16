@@ -15,7 +15,7 @@ SRCSDIR		= srcs
 INCLUDES	= include
 
 SRCS		= \
-			$(SRCSDIR)/main.c \
+			$(SRCSDIR)/main_bonus.c \
 
 OBJSDIR		= objs
 OBJS		= $(addprefix $(OBJSDIR)/, $(SRCS:.c=.o))
@@ -28,7 +28,6 @@ DEPS		= $(addprefix $(OBJSDIR)/, $(SRCS:.c=.d))
 all		: $(NAME)
 
 $(NAME)	: ${OBJS}
-		$(MAKE) -C ${LIBDIR} all
 		$(CC) ${CFLAGS} ${DFLAGS} ${IFLAGS} -o $@ $^
 
 ${OBJSDIR}/%.o	: %.c
@@ -36,15 +35,12 @@ ${OBJSDIR}/%.o	: %.c
 		${CC} ${CFLAGS} ${DFLAGS} ${IFLAGS} -c $< -o $@
 
 clean	:
-		$(MAKE) -C ${LIBDIR} clean
 		$(RM) $(OBJSDIR)
 
 fclean	:
-		$(MAKE) -C ${LIBDIR} fclean
 		$(RM) $(OBJSDIR) $(NAME)
 
 re		:
-		$(MAKE) -C ${LIBDIR} fclean
 		$(RM) $(OBJSDIR) $(NAME)
 		$(MAKE) all
 
