@@ -17,6 +17,8 @@ INCLUDES	= include
 SRCS		= \
 			$(SRCSDIR)/main.c \
 			$(SRCSDIR)/utils.c \
+			$(SRCSDIR)/validate.c \
+			$(SRCSDIR)/validate_utils.c \
 
 
 OBJSDIR		= objs
