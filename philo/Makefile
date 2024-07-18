@@ -16,6 +16,8 @@ INCLUDES	= include
 
 SRCS		= \
 			$(SRCSDIR)/main.c \
+			$(SRCSDIR)/utils.c \
+
 
 OBJSDIR		= objs
 OBJS		= $(addprefix $(OBJSDIR)/, $(SRCS:.c=.o))

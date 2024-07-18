@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/16 15:24:29 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/18 16:01:02 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,10 @@
 
 # define SUCCESS 0
 # define ERROR 1
+
+// typedef struct s_data
+// {
+
+// }	t_data;
 
 #endif // PHILO_H
