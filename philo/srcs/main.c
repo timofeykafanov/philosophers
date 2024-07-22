@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/22 13:13:21 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/22 15:09:04 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,14 +43,17 @@ void	init_data(t_data *data, int argc, char **argv)
 // temp
 void	print_data(t_data *data)
 {
-	printf("pholis: %d\n", data->philos);
+	printf("philos: %d\n", data->philos);
 	printf("time_to_die: %d\n", data->time_to_die);
 	printf("time_to_eat: %d\n", data->time_to_eat);
 	printf("time_to_sleep: %d\n", data->time_to_sleep);
 	printf("number_of_meals: %d\n", data->number_of_meals);
 }
 
+void	do_simulation(t_data *data)
+{
 
+}
 
 int	main(int argc, char **argv)
 {
@@ -64,7 +67,7 @@ int	main(int argc, char **argv)
 		init_data(&data, argc, argv);
 		//temp
 		print_data(&data);
-		// do_simulation(&data);
+		do_simulation(&data);
 	}
 	else
 		return (printf(ERR_MESS_ARGS, argv[0]), ERROR);

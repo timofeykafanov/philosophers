@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/22 10:40:32 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/22 13:21:31 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,12 @@ than 1!\n"
 
 typedef struct s_data
 {
-	int	philos;
-	int	time_to_die;
-	int time_to_eat;
-	int time_to_sleep;
-	int	number_of_meals;
+	int			philos;
+	int			time_to_die;
+	int 		time_to_eat;
+	int 		time_to_sleep;
+	int			number_of_meals;
+	pthread_t	*threads;
 }	t_data;
 
 // utils.c
