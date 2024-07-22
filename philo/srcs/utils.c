@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 17:13:45 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/18 17:14:29 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/22 10:37:19 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,18 @@ int	ft_atoi(const char *nptr)
 		nptr++;
 	}
 	return (result * sign);
+}
+
+void	ft_bzero(void *ptr, size_t num)
+{
+	unsigned char	*p;
+	size_t			i;
+
+	p = ptr;
+	i = 0;
+	while (i < num)
+	{
+		p[i] = 0;
+		i++;
+	}
 }
