@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/22 13:21:31 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/23 16:12:10 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # define SUCCESS 0
 # define ERROR 1
 
-# define ERR_MESS_ARGS			"Error! Usage: %s number_of_philosophers \
-time_to_die time_to_eat time_to_sleep \
+# define ERR_MESS_ARGS			"Error! Usage: %s <number_of_philosophers> \
+<time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]!\n"
 # define ERR_MESS_NUM_DIGITS	"Error! The number of philosophers should \
 contain only digits!\n"
