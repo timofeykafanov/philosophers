@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/23 16:12:10 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:04:03 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,26 @@ only digits!\n"
 # define ERR_MESS_MEALS			"Error! The number_of_meals can not be less \
 than 1!\n"
 
+typedef struct s_data	t_data;
+
+typedef struct s_philos
+{
+	t_data	*data;
+	int		time_left;
+	bool	alive;
+}	t_philos;
+
 typedef struct s_data
 {
-	int			philos;
-	int			time_to_die;
-	int 		time_to_eat;
-	int 		time_to_sleep;
-	int			number_of_meals;
-	pthread_t	*threads;
+	int				thread;
+	int				number;
+	t_philos		*philos;
+	int				time_to_die;
+	int 			time_to_eat;
+	int 			time_to_sleep;
+	int				number_of_meals;
+	pthread_t		*threads;
+	pthread_mutex_t *mutex;
 }	t_data;
 
 // utils.c
