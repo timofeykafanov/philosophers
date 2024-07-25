@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/24 16:04:03 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:09:45 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include <pthread.h>
+# include <sys/time.h>
 
 # define SUCCESS 0
 # define ERROR 1
@@ -51,8 +52,12 @@ typedef struct s_data	t_data;
 typedef struct s_philos
 {
 	t_data	*data;
+	int		id;
 	int		time_left;
 	bool	alive;
+	int		meals;
+	pthread_mutex_t *left_fork;
+	pthread_mutex_t *right_fork;
 }	t_philos;
 
 typedef struct s_data
@@ -64,8 +69,9 @@ typedef struct s_data
 	int 			time_to_eat;
 	int 			time_to_sleep;
 	int				number_of_meals;
+	int				timestamp;
 	pthread_t		*threads;
-	pthread_mutex_t *mutex;
+	pthread_mutex_t *fork;
 }	t_data;
 
 // utils.c

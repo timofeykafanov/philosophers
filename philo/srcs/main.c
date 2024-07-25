@@ -6,12 +6,11 @@
 /*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/24 16:23:03 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/07/25 17:09:40 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-#include <pthread.h>
 
 // int counter = 0;
 // pthread_mutex_t lock;
@@ -32,17 +31,40 @@
 // 	return (SUCCESS);
 // }
 
+long get_time(void)
+{
+    struct timeval time;
+    gettimeofday(&time, NULL);
+    return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
 void	init_philos(t_data *data)
 {
 	int	i;
 	i = 0;
 	while (i < data->number)
 	{
+		data->philos[i].id = i + 1;
 		data->philos[i].alive = true;
 		data->philos[i].time_left = data->time_to_die;
 		data->philos[i].data = data;
+		data->philos[i].left_fork = &data->fork[i];
+		data->philos[i].right_fork = &data->fork[(i + 1) % data->number];
+		data->philos[i].meals = 0;
 		i++;
 	}
+}
+
+bool	init_mutex(t_data *data)
+{
+	int	i;
+	data->fork = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t) * data->number);
+	if (!data->fork)
+		exit(false);
+	i = 0;
+	while (i < data->number)
+		pthread_mutex_init(&data->fork[i++], NULL);
+	return (true);
 }
 
 void	init_data(t_data *data, int argc, char **argv)
@@ -51,20 +73,23 @@ void	init_data(t_data *data, int argc, char **argv)
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
+	data->timestamp = 0;
 	if (argc == 6)
 		data->number_of_meals = ft_atoi(argv[5]);
 	else
 	 	data->number_of_meals = -1;
+	if (init_mutex(data) == false)
+		exit(ERROR);
 	data->threads = (pthread_t *)malloc(data->number * sizeof(pthread_t));
 	if (!data->threads)
 	{
-		free(data->mutex);
+		free(data->fork);
         exit(ERROR);
 	}
 	data->philos = (t_philos *)malloc(data->number * sizeof(t_philos));
 	if (!data->philos)
 	{
-		free(data->mutex);
+		free(data->fork);
 		free(data->threads);
 		exit(ERROR);
 	}
@@ -80,11 +105,29 @@ void	print_data(t_data *data)
 	printf("number_of_meals: %d\n", data->number_of_meals);
 }
 
-void	*do_something(void *arg)
+void	*philo_routine(void *arg)
 {
-	t_philos	*philos;
+	t_philos	*philo;
+	t_data		*data;
 
-	philos = ((t_philos *)arg);
+	philo = ((t_philos *)arg);
+	data = philo->data;
+
+	while (1)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		printf("%d has taken a fork\n", philo->id);
+		pthread_mutex_lock(philo->right_fork);
+		printf("%d has taken a fork\n", philo->id);
+		printf("%d is eating\n", philo->id);
+		philo->meals++;
+		usleep(data->time_to_eat * 1000);
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
+		printf("%d is sleeping\n", philo->id);
+        usleep(data->time_to_sleep * 1000);
+		printf("%d is thinking\n", philo->id);
+	}
 	// pthread_mutex_lock(data->mutex);
 	// data->philos[0].time_left = data->thread * 100;
 	// pthread_mutex_unlock(data->mutex);
@@ -94,7 +137,7 @@ void	*do_something(void *arg)
 	// // print_data(data);
 	// printf("data->thread: %d\n", data->thread);
 	// usleep(500);
-	printf("time_to_eat: %d\n", philos->data->time_to_eat);
+	// printf("id: %d\n", philos->data->philos[philos->id -1].data->philos[philos->id - 1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].data->philos[philos->id -1].id);
 	return (SUCCESS);
 }
 
@@ -105,8 +148,12 @@ bool	do_simulation(t_data *data)
 	i = 0;
 	while (i < data->number)
 	{
-		if (pthread_create(&data->threads[i], NULL, &do_something, (void *)&data->philos[i]) != 0)
+		if (pthread_create(&data->threads[i], NULL, &philo_routine, (void *)&data->philos[i]) != 0)
+		{
+			while (--i >= 0)
+				pthread_join(data->threads[i], NULL);
 			return (false);
+		}
 		i++;
 	}
 	i = 0;
@@ -127,18 +174,15 @@ int	main(int argc, char **argv)
 	{
 		if (!validate_args(argc, argv))
 			return (ERROR);
-		ft_bzero(&data, sizeof(data));
-		data.mutex = (pthread_mutex_t *)malloc(sizeof(pthread_mutex_t));
-		if (!data.mutex)
-			return (ERROR);
-		pthread_mutex_init(data.mutex, NULL);
+		// ft_bzero(&data, sizeof(data));
+		// pthread_mutex_init(data.fork, NULL);
 		init_data(&data, argc, argv);
 		//temp
 		print_data(&data);
 		if (do_simulation(&data) == false)
-			return (free(data.threads), free(data.philos), pthread_mutex_destroy(data.mutex), free(data.mutex), ERROR);
-		pthread_mutex_destroy(data.mutex);
-		free(data.mutex);
+			return (free(data.threads), free(data.philos), pthread_mutex_destroy(data.fork), free(data.fork), ERROR);
+		pthread_mutex_destroy(data.fork);
+		free(data.fork);
 		free(data.threads);
 		free(data.philos);
 	}
