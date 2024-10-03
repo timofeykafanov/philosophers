@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/03 09:33:59 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:45:07 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ bool	validate_args(int argc, char **argv);
 
 // validate_utils.c
 
-bool	contains_inly_digits(char *number);
+bool	contains_only_digits(char *number);
 bool	validate_number(char *number);
 
 #endif // PHILO_H

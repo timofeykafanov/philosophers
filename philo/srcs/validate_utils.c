@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   validate_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
+/*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 17:17:22 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/18 17:23:56 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:44:58 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-bool	contains_inly_digits(char *number)
+bool	contains_only_digits(char *number)
 {
 	int	i;
 
@@ -28,7 +28,7 @@ bool	contains_inly_digits(char *number)
 
 bool	validate_number(char *number)
 {
-	if (!contains_inly_digits(number))
+	if (!contains_only_digits(number))
 		return (printf(ERR_MESS_NUM_DIGITS), false);
 	if (ft_atoi(number) <= 0 || ft_atoi(number) > 200)
 		return (printf(ERR_MESS_NUMBER), false);

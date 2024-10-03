@@ -6,12 +6,11 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/03 10:17:29 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 16:18:02 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-#include <stdio.h>
 
 // int counter = 0;
 // pthread_mutex_t lock;
@@ -38,6 +37,16 @@ long	get_time(void)
     gettimeofday(&time, NULL);
     return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
+
+void	improved_usleep(long time)
+{
+	long	start;
+
+	start = get_time();
+	while (get_time() - start < time / 1000)
+		usleep(100);
+}
+
 
 void	init_philos(t_data *data)
 {
@@ -115,20 +124,22 @@ void	*philo_routine(void *arg)
 	data = philo->data;
 	while (1)
 	{
+		if (philo->id % 2 == 0 && get_time() - data->timestamp < 5)
+		{
+			printf("%zu %d is thinking\n", get_time() - data->timestamp, philo->id);			
+			improved_usleep(data->time_to_eat * 1000);
+		}
 		pthread_mutex_lock(philo->left_fork);
-		// printf("timestamp = %zu\n", philo->data->timestamp);
-		// printf("get_time() = %zu\n", get_time());
-		// printf("time = %zu\n", get_time() - philo->data->timestamp);
 		printf("%zu %d has taken a fork\n", get_time() - data->timestamp, philo->id);
 		pthread_mutex_lock(philo->right_fork);
 		printf("%zu %d has taken a fork\n", get_time() - data->timestamp, philo->id);
 		printf("%zu %d is eating\n", get_time() - data->timestamp, philo->id);
 		philo->meals++;
-		usleep(data->time_to_eat * 1000);
+		improved_usleep(data->time_to_eat * 1000);
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
 		printf("%zu %d is sleeping\n", get_time() - data->timestamp, philo->id);
-        usleep(data->time_to_sleep * 1000);
+        improved_usleep(data->time_to_sleep * 1000);
 		printf("%zu %d is thinking\n", get_time() - data->timestamp, philo->id);
 	}
 	// pthread_mutex_lock(data->mutex);

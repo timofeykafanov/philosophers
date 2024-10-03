@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   validate.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
+/*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 17:16:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/18 17:29:14 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/03 12:45:19 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 bool	validate_time_to_die(char *time_to_die)
 {
-	if (!contains_inly_digits(time_to_die))
+	if (!contains_only_digits(time_to_die))
 		return (printf(ERR_MESS_DIE_DIGITS), false);
 	if (ft_atoi(time_to_die) <= 0)
 		return (printf(ERR_MESS_DIE), false);
@@ -23,7 +23,7 @@ bool	validate_time_to_die(char *time_to_die)
 
 bool	validate_time_to_eat(char *time_to_eat)
 {
-	if (!contains_inly_digits(time_to_eat))
+	if (!contains_only_digits(time_to_eat))
 		return (printf(ERR_MESS_EAT_DIGITS), false);
 	if (ft_atoi(time_to_eat) <= 0)
 		return (printf(ERR_MESS_EAT), false);
@@ -32,7 +32,7 @@ bool	validate_time_to_eat(char *time_to_eat)
 
 bool	validate_time_to_sleep(char *time_to_sleep)
 {
-	if (!contains_inly_digits(time_to_sleep))
+	if (!contains_only_digits(time_to_sleep))
 		return (printf(ERR_MESS_SLEEP_DIGITS), false);
 	if (ft_atoi(time_to_sleep) <= 0)
 		return (printf(ERR_MESS_SLEEP), false);
@@ -43,7 +43,7 @@ bool	validate_number_of_meals(int argc, char **argv)
 {
 	if (argc == 6)
 	{
-		if (!contains_inly_digits(argv[5]))
+		if (!contains_only_digits(argv[5]))
 			return (printf(ERR_MESS_MEALS_DIGITS), false);
 		if (ft_atoi(argv[5]) <= 0)
 			return (printf(ERR_MESS_MEALS), false);
