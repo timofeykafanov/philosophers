@@ -6,11 +6,12 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/03 16:18:02 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/04 13:18:47 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+#include <pthread.h>
 
 // int counter = 0;
 // pthread_mutex_t lock;
@@ -38,13 +39,22 @@ long	get_time(void)
     return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-void	improved_usleep(long time)
+bool	improved_usleep(long time, t_data *data, t_philos *philo)
 {
 	long	start;
 
 	start = get_time();
-	while (get_time() - start < time / 1000)
+	while (get_time() - start < time)
+	{
+		pthread_mutex_lock(&data->alive);
+		if (!philo->alive)
+		{
+			pthread_mutex_unlock(&data->alive);
+			return (false);
+		}
 		usleep(100);
+	}
+	return (true);
 }
 
 
@@ -74,6 +84,7 @@ bool	init_mutex(t_data *data)
 	i = 0;
 	while (i < data->number)
 		pthread_mutex_init(&data->fork[i++], NULL);
+	pthread_mutex_init(&data->print, NULL);
 	return (true);
 }
 
@@ -115,32 +126,43 @@ void	print_data(t_data *data)
 	printf("number_of_meals: %d\n", data->number_of_meals);
 }
 
+void	print_status(t_data *data, int id, char *message)
+{
+	pthread_mutex_lock(&data->print);
+	printf("%zu %d %s\n", get_time() - data->timestamp, id, message);
+	pthread_mutex_unlock(&data->print);
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philos	*philo;
 	t_data		*data;
+	long		count;
 
 	philo = ((t_philos *)arg);
 	data = philo->data;
+	count = 0;
 	while (1)
 	{
-		if (philo->id % 2 == 0 && get_time() - data->timestamp < 5)
+		print_status(data, philo->id, "is thinking");
+		if (philo->id % 2 == 0 && count == 0)
 		{
-			printf("%zu %d is thinking\n", get_time() - data->timestamp, philo->id);			
-			improved_usleep(data->time_to_eat * 1000);
+			print_status(data, philo->id, "is thinking");
+			improved_usleep(data->time_to_eat, data, philo);
 		}
 		pthread_mutex_lock(philo->left_fork);
-		printf("%zu %d has taken a fork\n", get_time() - data->timestamp, philo->id);
+		print_status(data, philo->id, "has taken a fork");
 		pthread_mutex_lock(philo->right_fork);
-		printf("%zu %d has taken a fork\n", get_time() - data->timestamp, philo->id);
-		printf("%zu %d is eating\n", get_time() - data->timestamp, philo->id);
+		print_status(data, philo->id, "has taken a fork");
+		print_status(data, philo->id, "is eating");
 		philo->meals++;
-		improved_usleep(data->time_to_eat * 1000);
+		improved_usleep(data->time_to_eat, data, philo);
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
-		printf("%zu %d is sleeping\n", get_time() - data->timestamp, philo->id);
-        improved_usleep(data->time_to_sleep * 1000);
-		printf("%zu %d is thinking\n", get_time() - data->timestamp, philo->id);
+		print_status(data, philo->id, "is sleeping");
+		improved_usleep(data->time_to_sleep, data, philo);
+		print_status(data, philo->id, "is thinking");
+		count++;
 	}
 	// pthread_mutex_lock(data->mutex);
 	// data->philos[0].time_left = data->thread * 100;
@@ -152,7 +174,7 @@ void	*philo_routine(void *arg)
 	// printf("data->thread: %d\n", data->thread);
 	// usleep(500);
 	// printf("id: %d\n", philo->data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].data->philos[philo->id].id);
-	// return (SUCCESS);
+	return (SUCCESS);
 }
 
 bool	do_simulation(t_data *data)

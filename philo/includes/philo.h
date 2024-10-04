@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/03 12:45:07 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/04 12:53:37 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ typedef struct s_data
 	long			timestamp;
 	pthread_t		*threads;
 	pthread_mutex_t *fork;
+	pthread_mutex_t	print;
+	pthread_mutex_t	alive;
 }	t_data;
 
 // utils.c
