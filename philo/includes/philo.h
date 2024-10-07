@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/04 12:53:37 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/07 09:30:36 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ typedef struct s_data
 	int 			time_to_sleep;
 	int				number_of_meals;
 	long			timestamp;
+	bool			died;
 	pthread_t		*threads;
 	pthread_mutex_t *fork;
 	pthread_mutex_t	print;

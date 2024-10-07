@@ -6,12 +6,13 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/04 13:18:47 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/07 09:35:34 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 #include <pthread.h>
+#include <unistd.h>
 
 // int counter = 0;
 // pthread_mutex_t lock;
@@ -39,19 +40,37 @@ long	get_time(void)
     return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
+void	print_status(t_data *data, int id, char *message)
+{
+	pthread_mutex_lock(&data->print);
+	printf("%zu %d %s\n", get_time() - data->timestamp, id, message);
+	pthread_mutex_unlock(&data->print);
+}
+
 bool	improved_usleep(long time, t_data *data, t_philos *philo)
 {
 	long	start;
 
 	start = get_time();
+	(void)data;
+	(void)philo;
 	while (get_time() - start < time)
 	{
-		pthread_mutex_lock(&data->alive);
-		if (!philo->alive)
-		{
-			pthread_mutex_unlock(&data->alive);
-			return (false);
-		}
+		// if (philo->time_left <= 0)
+		// {
+		// 	print_status(data, philo->id, "died");
+		// 	pthread_mutex_lock(&data->alive);
+		// 	data->died = true;
+		// 	pthread_mutex_unlock(&data->alive);
+		// 	return (false);
+		// }
+		// pthread_mutex_lock(&data->alive);
+		// if (data->died)
+		// {
+		// 	pthread_mutex_unlock(&data->alive);
+		// 	return (false);
+		// }
+		// pthread_mutex_unlock(&data->alive);
 		usleep(100);
 	}
 	return (true);
@@ -95,6 +114,7 @@ void	init_data(t_data *data, int argc, char **argv)
 	data->time_to_eat = ft_atoi(argv[3]);
 	data->time_to_sleep = ft_atoi(argv[4]);
 	data->timestamp = get_time();
+	data->died = false;
 	if (argc == 6)
 		data->number_of_meals = ft_atoi(argv[5]);
 	else
@@ -126,13 +146,6 @@ void	print_data(t_data *data)
 	printf("number_of_meals: %d\n", data->number_of_meals);
 }
 
-void	print_status(t_data *data, int id, char *message)
-{
-	pthread_mutex_lock(&data->print);
-	printf("%zu %d %s\n", get_time() - data->timestamp, id, message);
-	pthread_mutex_unlock(&data->print);
-}
-
 void	*philo_routine(void *arg)
 {
 	t_philos	*philo;
@@ -146,16 +159,14 @@ void	*philo_routine(void *arg)
 	{
 		print_status(data, philo->id, "is thinking");
 		if (philo->id % 2 == 0 && count == 0)
-		{
-			print_status(data, philo->id, "is thinking");
 			improved_usleep(data->time_to_eat, data, philo);
-		}
 		pthread_mutex_lock(philo->left_fork);
 		print_status(data, philo->id, "has taken a fork");
 		pthread_mutex_lock(philo->right_fork);
 		print_status(data, philo->id, "has taken a fork");
 		print_status(data, philo->id, "is eating");
 		philo->meals++;
+		philo->time_left = data->time_to_die;
 		improved_usleep(data->time_to_eat, data, philo);
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
@@ -192,6 +203,11 @@ bool	do_simulation(t_data *data)
 		}
 		i++;
 	}
+	// while (1)
+	// {
+		
+	// 	usleep(1000);
+	// }
 	i = 0;
 	while (i < data->number)
 	{
