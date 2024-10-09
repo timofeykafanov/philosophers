@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/07 09:35:34 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/09 15:43:21 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,18 @@ void	print_status(t_data *data, int id, char *message)
 bool	improved_usleep(long time, t_data *data, t_philos *philo)
 {
 	long	start;
+	int		count;
 
 	start = get_time();
+	count = 0;
 	(void)data;
 	(void)philo;
 	while (get_time() - start < time)
 	{
+		// if (count % 10 == 0)
+		// {
+		// 	philo->time_left -= 1;
+		// }
 		// if (philo->time_left <= 0)
 		// {
 		// 	print_status(data, philo->id, "died");
@@ -64,13 +70,14 @@ bool	improved_usleep(long time, t_data *data, t_philos *philo)
 		// 	pthread_mutex_unlock(&data->alive);
 		// 	return (false);
 		// }
-		// pthread_mutex_lock(&data->alive);
+		// pthread_mutex_lock(&data->died_mutex);
 		// if (data->died)
 		// {
-		// 	pthread_mutex_unlock(&data->alive);
+		// 	pthread_mutex_unlock(&data->died_mutex);
 		// 	return (false);
 		// }
-		// pthread_mutex_unlock(&data->alive);
+		// pthread_mutex_unlock(&data->died_mutex);
+		// count++;
 		usleep(100);
 	}
 	return (true);
@@ -173,7 +180,8 @@ void	*philo_routine(void *arg)
 		print_status(data, philo->id, "is sleeping");
 		improved_usleep(data->time_to_sleep, data, philo);
 		print_status(data, philo->id, "is thinking");
-		count++;
+		if (count == 0)
+			count++;
 	}
 	// pthread_mutex_lock(data->mutex);
 	// data->philos[0].time_left = data->thread * 100;
@@ -188,9 +196,37 @@ void	*philo_routine(void *arg)
 	return (SUCCESS);
 }
 
+void	*monitor_routine(void *arg)
+{
+	t_data		*data;
+	t_philos	*philo;
+
+	int	i = 0;
+	data = ((t_data *)arg);
+	philo = data->philos;
+	while (1)
+	{
+		while (i < data->number)
+		{
+			if (philo[i].time_left <= 0)
+			{
+				print_status(data, philo[i].id, "died");
+				pthread_mutex_lock(&data->died_mutex);
+				data->died = true;
+				pthread_mutex_unlock(&data->died_mutex);
+				return (NULL);
+			}
+			i++;
+		}
+	}
+	
+	return (NULL);
+}
+
 bool	do_simulation(t_data *data)
 {
-	int	i;
+	int			i;
+	t_philos	*philo;
 
 	i = 0;
 	while (i < data->number)
@@ -203,11 +239,7 @@ bool	do_simulation(t_data *data)
 		}
 		i++;
 	}
-	// while (1)
-	// {
-		
-	// 	usleep(1000);
-	// }
+	pthread_create(&data->monitor, NULL, &monitor_routine, &data);
 	i = 0;
 	while (i < data->number)
 	{
