@@ -5,6 +5,7 @@
 CC			= cc
 RM			= rm -rf
 CFLAGS		= -Wall -Wextra -Werror -g
+# -fsanitize=thread -O1
 DFLAGS	 	= -MD -MP
 IFLAGS		= -I $(INCLUDES)
 MAKEFLAGS	= -j$(nproc) --no-print-directory
@@ -39,6 +40,8 @@ all		: $(NAME)
 
 $(NAME)	: ${OBJS}
 		$(CC) ${CFLAGS} ${DFLAGS} ${IFLAGS} -o $@ $^
+
+# -lpthread
 
 ${OBJSDIR}/%.o	: %.c
 		@mkdir -p $(dir $@)

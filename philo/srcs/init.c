@@ -6,11 +6,14 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:04:16 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 15:05:27 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:52:18 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+#include <bits/pthreadtypes.h>
+#include <pthread.h>
+#include <time.h>
 
 static void	init_philos(t_data *data)
 {
@@ -47,6 +50,7 @@ static bool	init_mutex(t_data *data)
 	pthread_mutex_init(&data->print, NULL);
 	pthread_mutex_init(&data->died_mutex, NULL);
 	pthread_mutex_init(&data->is_eating, NULL);
+	pthread_mutex_init(&data->meals_mutex, NULL);
 	return (true);
 }
 

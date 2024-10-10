@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 15:38:16 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:40:59 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,3 +38,6 @@ int	main(int argc, char **argv)
 		return (printf(ERR_MESS_ARGS, argv[0]), ERROR);
 	return (SUCCESS);
 }
+
+
+// ./philo 3 300 100 100 stuck

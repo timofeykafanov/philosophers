@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 15:37:10 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 16:33:06 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,16 +31,22 @@ void	take_forks_and_eat(t_data *data, t_philos *philo)
 	print_status(data, philo->id, "has taken a fork");
 	pthread_mutex_lock(philo->right_fork);
 	print_status(data, philo->id, "has taken a fork");
+	pthread_mutex_lock(&data->meals_mutex);
 	if (philo->last_meal + data->time_to_die > get_time())
 		improved_usleep(1, data);
+	pthread_mutex_unlock(&data->meals_mutex);
 	pthread_mutex_lock(&data->is_eating);
 	print_status(data, philo->id, "is eating");
 	pthread_mutex_unlock(&data->is_eating);
+	pthread_mutex_lock(&data->meals_mutex);
 	philo->last_meal = get_time();
+	pthread_mutex_unlock(&data->meals_mutex);
 	improved_usleep(data->time_to_eat, data);
 	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_lock(&data->meals_mutex);
 	philo->meals++;
+	pthread_mutex_unlock(&data->meals_mutex);
 }
 
 static void	philo_loop(t_data *data, t_philos *philo, int count)

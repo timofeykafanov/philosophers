@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 15:38:40 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:51:35 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,11 @@ typedef struct s_data
 	bool			died;
 	int				full_philos;
 	pthread_t		*threads;
-	pthread_t		monitor;
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	print;
 	pthread_mutex_t	died_mutex;
 	pthread_mutex_t	is_eating;
+	pthread_mutex_t	meals_mutex;
 }	t_data;
 
 // utils.c
