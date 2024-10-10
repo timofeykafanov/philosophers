@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:04:55 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 10:08:34 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:25:35 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ bool	improved_usleep(long time, t_data *data, t_philos *philo)
 	count = 0;
 	(void)data;
 	(void)philo;
-	while (get_time() - start < time)
+	while (!data->died && get_time() - start < time)
 	{
 		// if (count % 10 == 0)
 		// {

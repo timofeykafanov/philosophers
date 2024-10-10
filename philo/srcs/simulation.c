@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 10:10:36 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:27:55 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,36 +45,6 @@ static void	*philo_routine(void *arg)
 	return (SUCCESS);
 }
 
-static void	*monitor_routine(void *arg)
-{
-	t_data		*data;
-	t_philos	*philo;
-
-	int	i = 0;
-	data = ((t_data *)arg);
-	philo = data->philos;
-	while (1)
-	{
-		while (i < data->number)
-		{
-			// pthread_mutex_lock(philo->meal_mutex);
-			if (philo[i].last_meal + data->time_to_die > get_time())
-			{
-				// pthread_mutex_unlock(philo->meal_mutex);
-				print_status(data, philo[i].id, "died");
-				pthread_mutex_lock(&data->died_mutex);
-				data->died = true;
-				pthread_mutex_unlock(&data->died_mutex);
-				return (NULL);
-			}
-			// pthread_mutex_unlock(philo->meal_mutex);
-			i++;
-		}
-	}
-	
-	return (NULL);
-}
-
 bool	do_simulation(t_data *data)
 {
 	int			i;
@@ -90,7 +60,20 @@ bool	do_simulation(t_data *data)
 		}
 		i++;
 	}
-	pthread_create(&data->monitor, NULL, &monitor_routine, &data);
+	while (1)
+	{
+		i = 0;
+		while (i < data->number)
+		{
+			if (data->philos[i].last_meal + data->time_to_die < get_time())
+			{
+				print_status(data, data->philos[i].id, "died");
+				return (false);
+			}
+			i++;
+			usleep(200);
+		}
+	}
 	i = 0;
 	while (i < data->number)
 	{

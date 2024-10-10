@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 10:12:02 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 10:46:16 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ typedef struct s_philos
 {
 	t_data	*data;
 	int		id;
-	int		last_meal;
+	long	last_meal;
 	// bool	alive;
 	int		meals;
-	pthread_mutex_t *meal_mutex;
+	// pthread_mutex_t meal_mutex;
 	pthread_mutex_t *left_fork;
 	pthread_mutex_t *right_fork;
 }	t_philos;
@@ -76,6 +76,7 @@ typedef struct s_data
 	pthread_t		monitor;
 	pthread_mutex_t *fork;
 	pthread_mutex_t	print;
+	pthread_mutex_t meal_mutex;
 	pthread_mutex_t	died_mutex;
 }	t_data;
 
