@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 17:16:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/03 12:45:19 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:20:43 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,6 @@ bool	validate_args(int argc, char **argv)
 	time_to_eat = validate_time_to_eat(argv[3]);
 	time_to_sleep = validate_time_to_sleep(argv[4]);
 	number_of_meals = validate_number_of_meals(argc, argv);
-	return (true);
+	return (number && time_to_die && time_to_eat
+		&& time_to_sleep && number_of_meals);
 }

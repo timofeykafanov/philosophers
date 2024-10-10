@@ -6,13 +6,13 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 13:06:10 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:43:33 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
 
-static bool	dead_check(t_data *data)
+static bool	stop_check(t_data *data)
 {
 	pthread_mutex_lock(&data->died_mutex);
 	if (data->died)
@@ -24,6 +24,42 @@ static bool	dead_check(t_data *data)
 	return (false);
 }
 
+void	take_forks(t_data *data, t_philos *philo)
+{
+	pthread_mutex_lock(philo->left_fork);
+	print_status(data, philo->id, "has taken a fork");
+	pthread_mutex_lock(philo->right_fork);
+	print_status(data, philo->id, "has taken a fork");
+}
+
+static void	philo_loop(t_data *data, t_philos *philo, int count)
+{
+	while (1)
+	{
+		print_status(data, philo->id, "is thinking");
+		if (philo->id % 2 == 0 && count == 0)
+			improved_usleep(data->time_to_eat, data, philo);
+		take_forks(data, philo);
+		if (philo->last_meal + data->time_to_die > get_time())
+			usleep(1000);
+		print_status(data, philo->id, "is eating");
+		philo->last_meal = get_time();
+		improved_usleep(data->time_to_eat, data, philo);
+		pthread_mutex_unlock(philo->right_fork);
+		pthread_mutex_unlock(philo->left_fork);
+		philo->meals++;
+		if (stop_check(data))
+			break ;
+		print_status(data, philo->id, "is sleeping");
+		improved_usleep(data->time_to_sleep, data, philo);
+		if (stop_check(data))
+			break ;
+		print_status(data, philo->id, "is thinking");
+		if (count == 0)
+			count++;
+	}
+}
+
 static void	*philo_routine(void *arg)
 {
 	t_philos	*philo;
@@ -33,43 +69,19 @@ static void	*philo_routine(void *arg)
 	philo = ((t_philos *)arg);
 	data = philo->data;
 	count = 0;
-	while (1)
-	{
-		print_status(data, philo->id, "is thinking");
-		if (philo->id % 2 == 0 && count == 0)
-			improved_usleep(data->time_to_eat, data, philo);
-		pthread_mutex_lock(philo->left_fork);
-		print_status(data, philo->id, "has taken a fork");
-		pthread_mutex_lock(philo->right_fork);
-		print_status(data, philo->id, "has taken a fork");
-		print_status(data, philo->id, "is eating");
-		philo->last_meal = get_time();
-		improved_usleep(data->time_to_eat, data, philo);
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
-		philo->meals++;
-		if (dead_check(data))
-			break ;
-		print_status(data, philo->id, "is sleeping");
-		improved_usleep(data->time_to_sleep, data, philo);
-		if (dead_check(data))
-			break ;
-		print_status(data, philo->id, "is thinking");
-		if (count == 0)
-			count++;
-	}
-	return (SUCCESS);
+	philo_loop(data, philo, count);
+	return (NULL);
 }
 
 bool	do_simulation(t_data *data)
 {
-	int			i;
-	bool		died;
+	int	i;
 
 	i = 0;
 	while (i < data->number)
 	{
-		if (pthread_create(&data->threads[i], NULL, &philo_routine, (void *)&data->philos[i]) != 0)
+		if (pthread_create(&data->threads[i], NULL, \
+			&philo_routine, (void *)&data->philos[i]) != 0)
 		{
 			while (--i >= 0)
 				pthread_join(data->threads[i], NULL);
@@ -77,28 +89,7 @@ bool	do_simulation(t_data *data)
 		}
 		i++;
 	}
-	died = false;
-	while (1)
-	{
-		i = 0;
-		while (i < data->number)
-		{
-			if (data->philos[i].last_meal + data->time_to_die < get_time())
-			{
-				pthread_mutex_lock(&data->died_mutex);
-				data->died = true;
-				pthread_mutex_unlock(&data->died_mutex);
-				usleep(1000);
-				print_status(data, data->philos[i].id, "died");
-				died = true;
-				break ;
-			}
-			i++;
-			usleep(1000);
-		}
-		if (died)
-			break ;
-	}
+	monitoring_loop(data);
 	i = 0;
 	while (i < data->number)
 	{

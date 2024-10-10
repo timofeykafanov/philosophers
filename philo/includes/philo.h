@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 10:46:16 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 14:43:53 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,13 @@ typedef struct s_data	t_data;
 
 typedef struct s_philos
 {
-	t_data	*data;
-	int		id;
-	long	last_meal;
-	// bool	alive;
-	int		meals;
-	// pthread_mutex_t meal_mutex;
-	pthread_mutex_t *left_fork;
-	pthread_mutex_t *right_fork;
+	t_data			*data;
+	int				id;
+	long			last_meal;
+	int				meals;
+	bool			full;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 }	t_philos;
 
 typedef struct s_data
@@ -67,16 +66,16 @@ typedef struct s_data
 	int				number;
 	t_philos		*philos;
 	int				time_to_die;
-	int 			time_to_eat;
-	int 			time_to_sleep;
+	int				time_to_eat;
+	int				time_to_sleep;
 	int				number_of_meals;
 	long			timestamp;
 	bool			died;
+	int				full_philos;
 	pthread_t		*threads;
 	pthread_t		monitor;
-	pthread_mutex_t *fork;
+	pthread_mutex_t	*fork;
 	pthread_mutex_t	print;
-	pthread_mutex_t meal_mutex;
 	pthread_mutex_t	died_mutex;
 }	t_data;
 
@@ -115,5 +114,14 @@ bool	do_simulation(t_data *data);
 // print.c
 
 void	print_status(t_data *data, int id, char *message);
+
+// check.c
+
+bool	full_check(t_data *data, int i);
+bool	death_check(t_data *data, int i);
+
+// monitoring.c
+
+void	monitoring_loop(t_data *data);
 
 #endif // PHILO_H

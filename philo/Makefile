@@ -23,6 +23,8 @@ SRCS		= \
 			$(SRCSDIR)/time.c \
 			$(SRCSDIR)/init.c \
 			$(SRCSDIR)/print.c \
+			$(SRCSDIR)/check.c \
+			$(SRCSDIR)/monitoring.c \
 
 
 OBJSDIR		= objs
