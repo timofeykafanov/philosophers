@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:04:16 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 14:05:33 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:05:27 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static bool	init_mutex(t_data *data)
 	}
 	pthread_mutex_init(&data->print, NULL);
 	pthread_mutex_init(&data->died_mutex, NULL);
+	pthread_mutex_init(&data->is_eating, NULL);
 	return (true);
 }
 

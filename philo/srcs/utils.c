@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tkafanov <tkafanov@student.42vienna.com    +#+  +:+       +#+        */
+/*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/18 17:13:45 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/07/22 10:37:19 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:38:29 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,11 @@ void	ft_bzero(void *ptr, size_t num)
 		p[i] = 0;
 		i++;
 	}
+}
+
+void	one_philo(t_data *data)
+{
+	printf("1 1 has taken a fork\n");
+	improved_usleep(data->time_to_die, data);
+	printf("%zu 1 died\n", get_time() - data->timestamp);
 }

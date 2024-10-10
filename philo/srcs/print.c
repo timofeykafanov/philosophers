@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:10:54 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 12:43:05 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:23:44 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	print_status(t_data *data, int id, char *message)
 {
 	pthread_mutex_lock(&data->print);
-	printf("%zu %d %s\n", get_time() - data->timestamp, id, message);
+	if (!data->died)
+		printf("%zu %d %s\n", get_time() - data->timestamp, id, message);
 	pthread_mutex_unlock(&data->print);
 }

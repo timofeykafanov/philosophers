@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:41 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 13:59:54 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:38:16 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,18 @@ int	main(int argc, char **argv)
 		if (!validate_args(argc, argv))
 			return (ERROR);
 		init_data(&data, argc, argv);
-		if (do_simulation(&data) == false)
-			return (free(data.threads), free(data.philos), \
-			pthread_mutex_destroy(data.fork), free(data.fork), ERROR);
-		pthread_mutex_destroy(data.fork);
-		free(data.fork);
-		free(data.threads);
-		free(data.philos);
+		if (data.number > 1)
+		{
+			if (do_simulation(&data) == false)
+				return (free(data.threads), free(data.philos), \
+				pthread_mutex_destroy(data.fork), free(data.fork), ERROR);
+			pthread_mutex_destroy(data.fork);
+			free(data.fork);
+			free(data.threads);
+			free(data.philos);
+		}
+		else
+			one_philo(&data);
 	}
 	else
 		return (printf(ERR_MESS_ARGS, argv[0]), ERROR);

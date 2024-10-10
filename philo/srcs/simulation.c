@@ -6,11 +6,12 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 14:43:33 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:37:10 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+#include <pthread.h>
 
 static bool	stop_check(t_data *data)
 {
@@ -24,12 +25,22 @@ static bool	stop_check(t_data *data)
 	return (false);
 }
 
-void	take_forks(t_data *data, t_philos *philo)
+void	take_forks_and_eat(t_data *data, t_philos *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	print_status(data, philo->id, "has taken a fork");
 	pthread_mutex_lock(philo->right_fork);
 	print_status(data, philo->id, "has taken a fork");
+	if (philo->last_meal + data->time_to_die > get_time())
+		improved_usleep(1, data);
+	pthread_mutex_lock(&data->is_eating);
+	print_status(data, philo->id, "is eating");
+	pthread_mutex_unlock(&data->is_eating);
+	philo->last_meal = get_time();
+	improved_usleep(data->time_to_eat, data);
+	pthread_mutex_unlock(philo->right_fork);
+	pthread_mutex_unlock(philo->left_fork);
+	philo->meals++;
 }
 
 static void	philo_loop(t_data *data, t_philos *philo, int count)
@@ -38,20 +49,12 @@ static void	philo_loop(t_data *data, t_philos *philo, int count)
 	{
 		print_status(data, philo->id, "is thinking");
 		if (philo->id % 2 == 0 && count == 0)
-			improved_usleep(data->time_to_eat, data, philo);
-		take_forks(data, philo);
-		if (philo->last_meal + data->time_to_die > get_time())
-			usleep(1000);
-		print_status(data, philo->id, "is eating");
-		philo->last_meal = get_time();
-		improved_usleep(data->time_to_eat, data, philo);
-		pthread_mutex_unlock(philo->right_fork);
-		pthread_mutex_unlock(philo->left_fork);
-		philo->meals++;
+			improved_usleep(data->time_to_eat, data);
+		take_forks_and_eat(data, philo);
 		if (stop_check(data))
 			break ;
 		print_status(data, philo->id, "is sleeping");
-		improved_usleep(data->time_to_sleep, data, philo);
+		improved_usleep(data->time_to_sleep, data);
 		if (stop_check(data))
 			break ;
 		print_status(data, philo->id, "is thinking");

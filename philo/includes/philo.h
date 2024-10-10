@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 14:43:53 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 15:38:40 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct s_data
 	pthread_mutex_t	*fork;
 	pthread_mutex_t	print;
 	pthread_mutex_t	died_mutex;
+	pthread_mutex_t	is_eating;
 }	t_data;
 
 // utils.c
@@ -84,6 +85,7 @@ typedef struct s_data
 int		ft_isdigit(int c);
 int		ft_atoi(const char *nptr);
 void	ft_bzero(void *ptr, size_t num);
+void	one_philo(t_data *data);
 
 // validate.c
 
@@ -101,7 +103,7 @@ bool	validate_number(char *number);
 // time.c
 
 long	get_time(void);
-bool	improved_usleep(long time, t_data *data, t_philos *philo);
+bool	improved_usleep(long time, t_data *data);
 
 // init.c
 
