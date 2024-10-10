@@ -6,11 +6,23 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 12:27:55 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 13:06:10 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
+
+static bool	dead_check(t_data *data)
+{
+	pthread_mutex_lock(&data->died_mutex);
+	if (data->died)
+	{
+		pthread_mutex_unlock(&data->died_mutex);
+		return (true);
+	}
+	pthread_mutex_unlock(&data->died_mutex);
+	return (false);
+}
 
 static void	*philo_routine(void *arg)
 {
@@ -31,13 +43,17 @@ static void	*philo_routine(void *arg)
 		pthread_mutex_lock(philo->right_fork);
 		print_status(data, philo->id, "has taken a fork");
 		print_status(data, philo->id, "is eating");
-		philo->meals++;
 		philo->last_meal = get_time();
 		improved_usleep(data->time_to_eat, data, philo);
 		pthread_mutex_unlock(philo->right_fork);
 		pthread_mutex_unlock(philo->left_fork);
+		philo->meals++;
+		if (dead_check(data))
+			break ;
 		print_status(data, philo->id, "is sleeping");
 		improved_usleep(data->time_to_sleep, data, philo);
+		if (dead_check(data))
+			break ;
 		print_status(data, philo->id, "is thinking");
 		if (count == 0)
 			count++;
@@ -48,6 +64,7 @@ static void	*philo_routine(void *arg)
 bool	do_simulation(t_data *data)
 {
 	int			i;
+	bool		died;
 
 	i = 0;
 	while (i < data->number)
@@ -60,6 +77,7 @@ bool	do_simulation(t_data *data)
 		}
 		i++;
 	}
+	died = false;
 	while (1)
 	{
 		i = 0;
@@ -67,12 +85,19 @@ bool	do_simulation(t_data *data)
 		{
 			if (data->philos[i].last_meal + data->time_to_die < get_time())
 			{
+				pthread_mutex_lock(&data->died_mutex);
+				data->died = true;
+				pthread_mutex_unlock(&data->died_mutex);
+				usleep(1000);
 				print_status(data, data->philos[i].id, "died");
-				return (false);
+				died = true;
+				break ;
 			}
 			i++;
-			usleep(200);
+			usleep(1000);
 		}
+		if (died)
+			break ;
 	}
 	i = 0;
 	while (i < data->number)

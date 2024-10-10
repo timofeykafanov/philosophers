@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:04:55 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 12:25:35 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/10 12:42:54 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,31 +26,15 @@ bool	improved_usleep(long time, t_data *data, t_philos *philo)
 
 	start = get_time();
 	count = 0;
-	(void)data;
 	(void)philo;
+	pthread_mutex_lock(&data->died_mutex);
 	while (!data->died && get_time() - start < time)
 	{
-		// if (count % 10 == 0)
-		// {
-		// 	philo->time_left -= 1;
-		// }
-		// if (philo->time_left <= 0)
-		// {
-		// 	print_status(data, philo->id, "died");
-		// 	pthread_mutex_lock(&data->alive);
-		// 	data->died = true;
-		// 	pthread_mutex_unlock(&data->alive);
-		// 	return (false);
-		// }
-		// pthread_mutex_lock(&data->died_mutex);
-		// if (data->died)
-		// {
-		// 	pthread_mutex_unlock(&data->died_mutex);
-		// 	return (false);
-		// }
-		// pthread_mutex_unlock(&data->died_mutex);
-		// count++;
+		pthread_mutex_unlock(&data->died_mutex);
+
 		usleep(100);
+		pthread_mutex_lock(&data->died_mutex);
 	}
+	pthread_mutex_unlock(&data->died_mutex);
 	return (true);
 }
