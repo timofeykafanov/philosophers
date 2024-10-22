@@ -6,31 +6,36 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 16:33:06 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/22 14:12:20 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-#include <pthread.h>
+#include <unistd.h>
 
-static bool	stop_check(t_data *data)
+void	define_order(t_data *data, t_philos *philo)
 {
-	pthread_mutex_lock(&data->died_mutex);
-	if (data->died)
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->right_fork);
+	else
 	{
-		pthread_mutex_unlock(&data->died_mutex);
-		return (true);
+		usleep(1);
+		pthread_mutex_lock(philo->left_fork);
 	}
-	pthread_mutex_unlock(&data->died_mutex);
-	return (false);
+	print_status(data, philo->id, "has taken a fork");
+	if (philo->id % 2 == 0)
+		pthread_mutex_lock(philo->left_fork);
+	else
+	{
+		usleep(1);
+		pthread_mutex_lock(philo->right_fork);
+	}
+	print_status(data, philo->id, "has taken a fork");
 }
 
 void	take_forks_and_eat(t_data *data, t_philos *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
-	print_status(data, philo->id, "has taken a fork");
-	pthread_mutex_lock(philo->right_fork);
-	print_status(data, philo->id, "has taken a fork");
+	define_order(data, philo);
 	pthread_mutex_lock(&data->meals_mutex);
 	if (philo->last_meal + data->time_to_die > get_time())
 		improved_usleep(1, data);
@@ -42,8 +47,8 @@ void	take_forks_and_eat(t_data *data, t_philos *philo)
 	philo->last_meal = get_time();
 	pthread_mutex_unlock(&data->meals_mutex);
 	improved_usleep(data->time_to_eat, data);
-	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
 	pthread_mutex_lock(&data->meals_mutex);
 	philo->meals++;
 	pthread_mutex_unlock(&data->meals_mutex);

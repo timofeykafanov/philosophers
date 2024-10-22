@@ -6,7 +6,7 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 14:16:46 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/10 15:51:35 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/22 13:51:53 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,14 +116,20 @@ bool	do_simulation(t_data *data);
 // print.c
 
 void	print_status(t_data *data, int id, char *message);
+void	print_died(t_data *data, int id);
 
 // check.c
 
 bool	full_check(t_data *data, int i);
 bool	death_check(t_data *data, int i);
+bool	stop_check(t_data *data);
 
 // monitoring.c
 
 void	monitoring_loop(t_data *data);
+
+// free_data.c
+
+void	free_data(t_data *data);
 
 #endif // PHILO_H

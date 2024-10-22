@@ -26,6 +26,7 @@ SRCS		= \
 			$(SRCSDIR)/print.c \
 			$(SRCSDIR)/check.c \
 			$(SRCSDIR)/monitoring.c \
+			$(SRCSDIR)/free_data.c \
 
 
 OBJSDIR		= objs
