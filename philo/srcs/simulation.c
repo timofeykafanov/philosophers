@@ -6,12 +6,11 @@
 /*   By: tkafanov <tkafanov@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/10 10:09:31 by tkafanov          #+#    #+#             */
-/*   Updated: 2024/10/22 14:12:20 by tkafanov         ###   ########.fr       */
+/*   Updated: 2024/10/23 11:00:24 by tkafanov         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/philo.h"
-#include <unistd.h>
 
 void	define_order(t_data *data, t_philos *philo)
 {
@@ -19,7 +18,6 @@ void	define_order(t_data *data, t_philos *philo)
 		pthread_mutex_lock(philo->right_fork);
 	else
 	{
-		usleep(1);
 		pthread_mutex_lock(philo->left_fork);
 	}
 	print_status(data, philo->id, "has taken a fork");
@@ -27,7 +25,6 @@ void	define_order(t_data *data, t_philos *philo)
 		pthread_mutex_lock(philo->left_fork);
 	else
 	{
-		usleep(1);
 		pthread_mutex_lock(philo->right_fork);
 	}
 	print_status(data, philo->id, "has taken a fork");
@@ -56,9 +53,14 @@ void	take_forks_and_eat(t_data *data, t_philos *philo)
 
 static void	philo_loop(t_data *data, t_philos *philo, int count)
 {
+	print_status(data, philo->id, "is thinking");
 	while (1)
 	{
-		print_status(data, philo->id, "is thinking");
+		if (data->number % 2 == 1)
+		{
+			if (philo->id % 2 == 1 && count != 0)
+				improved_usleep(data->time_to_eat / 2, data);
+		}
 		if (philo->id % 2 == 0 && count == 0)
 			improved_usleep(data->time_to_eat, data);
 		take_forks_and_eat(data, philo);
